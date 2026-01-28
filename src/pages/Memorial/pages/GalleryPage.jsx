@@ -160,7 +160,9 @@ const GalleryPage = () => {
                 />
               </>
             )}
-            <img src={item.img} alt={item.caption} />
+            <div className={styles.galleryPhotoFrame}>
+              <img src={item.img} alt={item.caption} />
+            </div>
           </div>
         ))}
       </div>
