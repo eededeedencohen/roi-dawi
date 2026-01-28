@@ -141,8 +141,14 @@ const GalleryPage = () => {
     touchTracker.current[id] = null;
 
     if (!isScrolling && timeDiff < 300) {
-      event.preventDefault();
-      setActiveId((prev) => (prev === id ? null : id));
+      // אם הלחיצה הייתה קצרה וללא גלילה - נבצע פעולה
+      // במקרה הזה לא משתמשים ב-preventDefault כדי לא לחסום התנהגות טבעית
+      // אלא אם כן זה ממש נדרש
+      if (activeId !== id) {
+        setActiveId(id);
+      } else {
+        setActiveId(null);
+      }
     }
   };
 
@@ -152,16 +158,24 @@ const GalleryPage = () => {
     }
   };
 
-  // --- הוספת גלילה אוטומטית למרכז התמונה הפעילה ---
+  // --- גלילה חכמה למרכז (אנכית בלבד) ---
   useEffect(() => {
     if (activeId !== null) {
       const el = document.getElementById(`gallery-item-${activeId}`);
       if (el) {
-        // גלילה חלקה למרכז המסך
-        el.scrollIntoView({
+        // חישוב המיקום המדויק לגלילה
+        const rect = el.getBoundingClientRect();
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+
+        // חישוב: המיקום האבסולוטי של האלמנט + חצי מהגובה שלו - חצי מגובה המסך
+        // זה ימרכז את האלמנט בדיוק באמצע המסך האנכי
+        const targetY =
+          rect.top + scrollTop - window.innerHeight / 2 + rect.height / 2;
+
+        window.scrollTo({
+          top: targetY,
           behavior: "smooth",
-          block: "center",
-          inline: "center",
         });
       }
     }
@@ -197,7 +211,7 @@ const GalleryPage = () => {
         {memories.map((item) => (
           <div
             key={item.id}
-            id={`gallery-item-${item.id}`} // הוספת ID לצורך זיהוי וגלילה
+            id={`gallery-item-${item.id}`}
             className={`${styles.galleryItem} ${
               activeId === item.id ? styles.galleryItemActive : ""
             }`}
