@@ -40,10 +40,7 @@
     padding: 12px 12px 20px;
     border: 1px solid rgba(15, 23, 42, 0.08);
     box-shadow: 0 18px 30px rgba(35, 24, 10, 0.25);
-
-    /* זווית בסיסית גדולה יותר */
     --gallery-rotate: -3deg;
-
     transform: rotate(var(--gallery-rotate));
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     opacity: 0;
@@ -52,6 +49,8 @@
     -webkit-user-select: none;
     user-select: none;
     will-change: transform;
+    touch-action: pan-y;
+    /* עוזר לדפדפן להבין שהאלמנט גליל רק אנכית */
 }
 
 .galleryItem[data-visible="true"] {
@@ -76,7 +75,6 @@
     transition-delay: 0.2s;
 }
 
-/* זוויות הטיה גדולות יותר (פיזור רחב יותר) */
 .galleryItem:nth-child(3n) {
     --gallery-rotate: 4deg;
 }
@@ -194,7 +192,6 @@
 @media (max-width: 540px) {
     .galleryGrid {
         gap: 10px;
-        /* רווח של 10 פיקסלים כפי שביקשת */
         padding: 0;
         overflow: visible;
     }

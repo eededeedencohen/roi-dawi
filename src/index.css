@@ -15,27 +15,34 @@
   --memorial-soft: #f4f6fb;
 }
 
-html,
-body {
+html {
+  width: 100%;
   overflow-x: hidden;
-  max-width: 100vw;
-  /* הגבלה קשיחה לרוחב המסך */
+  /* חובה כדי למנוע גלילה אופקית */
+}
+
+body {
   margin: 0;
   padding: 0;
+  width: 100%;
   min-height: 100dvh;
   font-family: 'Assistant', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  /* חובה גם כאן */
   position: relative;
-  /* עוזר לייצוב */
+  touch-action: pan-y;
+  /* משפר גלילה במובייל */
 }
 
 #root {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  /* מונע גלילה בתוך ה-root */
+  /* חובה גם ב-root כדי לחסום אלמנטים גולשים */
+  position: relative;
 }
 
 * {

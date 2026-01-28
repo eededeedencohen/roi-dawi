@@ -118,7 +118,7 @@ const GalleryPage = () => {
     const touch = event.touches[0];
     touchTracker.current[id] = {
       startY: touch.clientY,
-      startX: touch.clientX, // שומרים גם את מיקום X
+      startX: touch.clientX,
       startTime: Date.now(),
       isScrolling: false,
     };
@@ -128,12 +128,11 @@ const GalleryPage = () => {
     const info = touchTracker.current[id];
     if (info && !info.isScrolling) {
       const touch = event.touches[0];
-      // מחשבים כמה האצבע זזה
       const moveY = Math.abs(touch.clientY - info.startY);
       const moveX = Math.abs(touch.clientX - info.startX);
 
-      // אם התזוזה גדולה מ-10 פיקסלים (לכל כיוון), נחשיב זאת כגלילה
-      if (moveY > 10 || moveX > 10) {
+      // הגדלנו את הרגישות ל-15 כדי למנוע זיהוי שגוי של רעידות אצבע כגלילה
+      if (moveY > 15 || moveX > 15) {
         info.isScrolling = true;
       }
     }
@@ -149,10 +148,12 @@ const GalleryPage = () => {
     const isScrolling = info.isScrolling;
     touchTracker.current[id] = null;
 
-    // רק אם לא הייתה גלילה והלחיצה הייתה קצרה
-    if (!isScrolling && timeDiff < 300) {
-      // מונעים אירועי ברירת מחדל כדי למנוע התנגשויות (אופציונלי, תלוי התנהגות)
-      // event.preventDefault();
+    if (!isScrolling && timeDiff < 400) {
+      // הארכנו מעט את הזמן ל-400ms ליתר ביטחון
+      // ביטול אירועים אחרים כדי שהלחיצה תיתפס בוודאות
+      if (event.cancelable) {
+        event.preventDefault();
+      }
 
       if (activeId !== id) {
         setActiveId(id);
@@ -163,7 +164,6 @@ const GalleryPage = () => {
   };
 
   const handleClick = (id) => {
-    // מנגנון זה עובד רק במכשירים עם עכבר, כדי לא להתנגש עם ה-Touch
     if (window.matchMedia("(hover: hover)").matches) {
       setActiveId((prev) => (prev === id ? null : id));
     }
@@ -225,7 +225,7 @@ const GalleryPage = () => {
             }`}
             data-reveal
             onTouchStart={(event) => handleTouchStart(item.id, event)}
-            onTouchMove={(event) => handleTouchMove(item.id, event)} // הוספנו את ה-event כאן
+            onTouchMove={(event) => handleTouchMove(item.id, event)}
             onTouchEnd={(event) => handleTouchEnd(item.id, event)}
             onClick={() => handleClick(item.id)}
           >
