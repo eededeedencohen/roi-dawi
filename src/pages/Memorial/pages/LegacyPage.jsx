@@ -1,4 +1,4 @@
-import styles from "../Memorial.module.css";
+import styles from "./LegacyPage.module.css"; // שים לב לנתיב
 
 const LegacyPage = () => {
   return (

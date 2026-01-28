@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RoiHero from "../../../assets/roiImages/roi1.png";
 import imageSettings from "../../../data/imageSettings.json";
-import styles from "../Memorial.module.css";
+import styles from "./HomePage.module.css"; // שים לב לנתיב
 
 const STORAGE_KEY = "roiImageOverrides";
 

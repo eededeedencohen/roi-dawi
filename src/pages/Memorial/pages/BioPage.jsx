@@ -9,11 +9,10 @@ import RoiAndNitzan4 from "../../../assets/roiImages/roiAndNitzan4.jpg";
 import RoiAndNitzan5 from "../../../assets/roiImages/roiAndNitzan5.jpg";
 import RoiAndEden from "../../../assets/roiImages/roiAndEden2.jpg";
 import RoiAndTomer from "../../../assets/roiImages/roiAndTomer.jpg";
-// import RoiFamily from "../../../assets/roiImages/roiAndTomerAndEden2.jpg";
 import RoiFamily from "../../../assets/roiImages/roiDawiFamily.jpg";
 import LielGidoni from "../../../assets/roiImages/lielGidoni.jpeg";
 import imageSettings from "../../../data/imageSettings.json";
-import styles from "../Memorial.module.css";
+import styles from "./BioPage.module.css"; // שים לב לנתיב
 
 const STORAGE_KEY = "roiImageOverrides";
 const SWIPE_THRESHOLD = 40;

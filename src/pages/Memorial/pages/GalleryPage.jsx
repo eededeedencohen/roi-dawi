@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+// ... כל הייבואים של התמונות נשארים אותו דבר, לא שיניתי ...
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -39,7 +40,7 @@ import RoiHapoel from "../../../assets/roiImages/roiHapoel.jpg";
 import RoiMechina1 from "../../../assets/roiImages/roiMechina1.jpg";
 import RoiMechina2 from "../../../assets/roiImages/roiMechina2.jpg";
 import imageSettings from "../../../data/imageSettings.json";
-import styles from "../Memorial.module.css";
+import styles from "./GalleryPage.module.css"; // שים לב לנתיב
 
 const memories = [
   { id: 1, img: Roi1, caption: "רועי במדים" },

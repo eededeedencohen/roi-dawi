@@ -1,0 +1,86 @@
+.sectionAlt {
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    padding: 80px 20px;
+}
+
+.militaryHeader {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.militaryLogo {
+    height: 80px;
+    margin-bottom: 12px;
+}
+
+.militaryTitle {
+    font-family: "Heebo", sans-serif;
+    font-size: 36px;
+    color: var(--givati-purple);
+}
+
+.timeline {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.timelineItem {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.timelineDate,
+.timelineDateAccent,
+.timelineDateDark {
+    font-size: 22px;
+    font-weight: 700;
+    color: #9ca3af;
+}
+
+.timelineDateAccent {
+    color: var(--hapoel-red);
+}
+
+.timelineDateDark {
+    color: #111827;
+}
+
+.timelineCard {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    border-right: 4px solid var(--givati-purple);
+}
+
+.timelineCard h3 {
+    margin-bottom: 12px;
+    color: #111827;
+}
+
+.timelineCard p {
+    color: #4b5563;
+    line-height: 1.8;
+}
+
+.timelineQuote {
+    margin-top: 16px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 12px;
+    color: #4b5563;
+    font-style: italic;
+    border-right: 3px solid #9ca3af;
+}
+
+.timelineQuote span {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+}

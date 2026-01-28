@@ -1,5 +1,5 @@
 import GivatiLogo from "../../../assets/roiImages/Givati.png";
-import styles from "../Memorial.module.css";
+import styles from "./MilitaryPage.module.css"; // שים לב לנתיב
 
 const MilitaryPage = () => {
   return (

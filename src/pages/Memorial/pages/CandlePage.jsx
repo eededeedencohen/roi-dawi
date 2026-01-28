@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "../Memorial.module.css";
+import styles from "./CandlePage.module.css"; // שים לב לנתיב
 
 const LIT_KEY = "roi_memorial_candle_lit";
 const COUNTER_API_BASE = "https://cart.edencohen.dev/api/v1/cander-counter";

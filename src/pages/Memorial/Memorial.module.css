@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Heebo:wght@300;400;700;900&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Heebo:wght@300;400;700;900&display=swap");
 
 :root {
     --memorial-gold: #c5a059;
@@ -1786,5 +1786,34 @@
         height: 280px;
         object-fit: contain;
         background: #fff;
+    }
+} */
+
+.page {
+    background: radial-gradient(circle at top, #ffffff 0%, #f7f8fc 45%, #eef1f8 100%);
+    color: var(--memorial-ink);
+    min-height: 100vh;
+    font-family: "Assistant", sans-serif;
+    scroll-behavior: smooth;
+}
+
+.mainContent {
+    min-height: calc(100vh - 120px);
+    padding-top: 64px;
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

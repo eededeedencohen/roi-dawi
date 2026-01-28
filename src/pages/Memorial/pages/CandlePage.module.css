@@ -1,0 +1,102 @@
+.candleSection {
+    min-height: 60vh;
+    background: var(--memorial-dark);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.candleSection h2 {
+    color: var(--memorial-gold);
+    font-family: "Heebo", sans-serif;
+    margin-bottom: 12px;
+}
+
+.candleWrapper {
+    position: relative;
+    width: 120px;
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.candleBody {
+    width: 60px;
+    height: 100px;
+    background: linear-gradient(to bottom, #e5e7eb, #9ca3af);
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.candleWick {
+    position: absolute;
+    bottom: 100px;
+    width: 6px;
+    height: 18px;
+    background: #4b5563;
+}
+
+.candleFlame {
+    position: absolute;
+    bottom: 112px;
+    width: 28px;
+    height: 44px;
+    border-radius: 999px;
+    background: linear-gradient(to top, #f97316, #fde047, #fff);
+    filter: blur(1px);
+    animation: flicker 1.5s infinite alternate;
+    box-shadow: 0 0 20px 5px rgba(255, 165, 0, 0.6);
+}
+
+@keyframes flicker {
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+}
+
+.candleButton {
+    border: none;
+    background: var(--memorial-gold);
+    color: #111827;
+    font-weight: 700;
+    padding: 12px 34px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.candleButton:hover {
+    transform: scale(1.03);
+}
+
+.candleButtonDone {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.candleText {
+    color: #9ca3af;
+}
+
+.candleCount {
+    font-size: 14px;
+    color: #9ca3af;
+}

@@ -4,6 +4,15 @@
 :root {
   --purple: rgb(86, 58, 116);
   --green: rgb(72, 156, 167);
+
+  /* משתנים שהועברו מ-Memorial.module.css */
+  --memorial-gold: #c5a059;
+  --memorial-dark: #1a1a1a;
+  --givati-purple: #800080;
+  --hapoel-red: #d2232a;
+  --memorial-surface: #ffffff;
+  --memorial-ink: #1f2937;
+  --memorial-soft: #f4f6fb;
 }
 
 html,
@@ -11,12 +20,11 @@ body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
-  /* שימוש ב-dvh גם כאן למניעת גלילה */
   min-height: 100dvh;
   font-family: 'Assistant', sans-serif;
-  /* הפונט החדש */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -29,10 +37,30 @@ body {
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  /* דורס את הגדרות ברירת המחדל של אייפון */
   font-family: 'Assistant', sans-serif;
 }
 
 *:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* אנימציות גלובליות לחשיפת אלמנטים */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+
+[data-reveal="visible"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

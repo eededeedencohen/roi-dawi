@@ -1,4 +1,4 @@
-import styles from "../Memorial.module.css";
+import styles from "./Navbar.module.css"; // שים לב לנתיב
 
 const Navbar = ({
   pages,
