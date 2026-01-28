@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from "react";
-// ייבוא התמונות
-import RoiImage1 from "../../assets/Images/roi1.png";
-import RoiImage2 from "../../assets/Images/roi2.png";
-import RoiImage3 from "../../assets/Images/roi3.png";
-import RoiImage4 from "../../assets/Images/roi4.png";
-import RoiImage5 from "../../assets/Images/roi5.png";
-import RoiImage6 from "../../assets/Images/roi6.png";
+import RoiImage1 from "../../assets/roiImages/roi1.png";
+import RoiImage2 from "../../assets/roiImages/roi2.png";
+import RoiImage3 from "../../assets/roiImages/roi3.png";
+import RoiImage4 from "../../assets/roiImages/roi4.png";
+import RoiImage5 from "../../assets/roiImages/roi5.png";
+import RoiImage6 from "../../assets/roiImages/roi6.png";
 import styles from "./RoiDawi.module.css";
 
 const RoiDawi = () => {

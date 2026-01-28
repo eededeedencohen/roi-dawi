@@ -1,4 +1,4 @@
-import RoiHero from "../../../assets/roiImages/roiLast.webp";
+import RoiHero from "../../../assets/roiImages/roi1.png";
 import styles from "../Memorial.module.css";
 
 const HomePage = ({ onNavigate }) => {
