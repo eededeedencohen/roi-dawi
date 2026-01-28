@@ -1359,7 +1359,7 @@
 }
 
 .galleryItem:hover .galleryPin {
-    transform: translateY(-32px) scale(1.05);
+    transform: translateY(-32px) rotate(-12deg) scale(1.05);
     box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
 }
 
@@ -1547,6 +1547,10 @@
 
     .galleryItem {
         height: 260px;
+    }
+
+    .galleryItem:hover {
+        transform: rotate(0deg) scale(1.12);
     }
 
     .imageCardFixed {

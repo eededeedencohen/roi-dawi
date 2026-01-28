@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -38,6 +38,7 @@ import RoiFamily4 from "../../../assets/roiImages/roiFamily4.jpg";
 import RoiHapoel from "../../../assets/roiImages/roiHapoel.jpg";
 import RoiMechina1 from "../../../assets/roiImages/roiMechina1.jpg";
 import RoiMechina2 from "../../../assets/roiImages/roiMechina2.jpg";
+import imageSettings from "../../../data/imageSettings.json";
 import styles from "../Memorial.module.css";
 
 const memories = [
@@ -84,6 +85,8 @@ const memories = [
 
 const GalleryPage = () => {
   const storageKey = "galleryPinPositions";
+  const imageOverridesKey = "galleryImageOverrides";
+  const tapTracker = useRef({});
   const [pinPositions, setPinPositions] = useState(() => {
     try {
       const saved = localStorage.getItem(storageKey);
@@ -92,13 +95,71 @@ const GalleryPage = () => {
       return {};
     }
   });
+  const [imageOverrides, setImageOverrides] = useState(() => {
+    try {
+      const saved = localStorage.getItem(imageOverridesKey);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
   const [editorOpen, setEditorOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const [tempPin, setTempPin] = useState("center");
+  const [imageEditorState, setImageEditorState] = useState({
+    posX: 50,
+    posY: 50,
+    zoom: "1",
+  });
+
+  const positionToXY = (position) => {
+    if (!position) {
+      return { x: 50, y: 50 };
+    }
+    const [rawX = "center", rawY = "center"] = position.split(" ");
+    const mapToken = (token, axis) => {
+      if (token.endsWith("%")) {
+        const value = Number.parseFloat(token.replace("%", ""));
+        return Number.isNaN(value) ? 50 : Math.min(100, Math.max(0, value));
+      }
+      if (token === "left") {
+        return 0;
+      }
+      if (token === "right") {
+        return 100;
+      }
+      if (token === "top") {
+        return 0;
+      }
+      if (token === "bottom") {
+        return 100;
+      }
+      return axis === "x" ? 50 : 50;
+    };
+    return { x: mapToken(rawX, "x"), y: mapToken(rawY, "y") };
+  };
+
+  const xyToPosition = (x, y) => `${Math.round(x)}% ${Math.round(y)}%`;
+
+  const resolveImageSettings = (id) => {
+    const base = imageSettings.gallery?.[id] || {
+      position: "center center",
+      zoom: 1,
+    };
+    const overrides = imageOverrides[id] || {};
+    return { ...base, ...overrides };
+  };
 
   const openEditor = (id) => {
     setActiveId(id);
     setTempPin(pinPositions[id] || "center");
+    const merged = resolveImageSettings(id);
+    const { x, y } = positionToXY(merged.position || "center center");
+    setImageEditorState({
+      posX: x,
+      posY: y,
+      zoom: String(merged.zoom ?? 1),
+    });
     setEditorOpen(true);
   };
 
@@ -115,7 +176,60 @@ const GalleryPage = () => {
     const next = { ...pinPositions, [activeId]: tempPin };
     setPinPositions(next);
     localStorage.setItem(storageKey, JSON.stringify(next));
+
+    const zoom = Number.parseFloat(imageEditorState.zoom);
+    const position = xyToPosition(imageEditorState.posX, imageEditorState.posY);
+    const updatedImageOverrides = {
+      ...imageOverrides,
+      [activeId]: {
+        position,
+        zoom: Number.isNaN(zoom) ? 1 : zoom,
+      },
+    };
+    setImageOverrides(updatedImageOverrides);
+    localStorage.setItem(
+      imageOverridesKey,
+      JSON.stringify(updatedImageOverrides),
+    );
     closeEditor();
+  };
+
+  const handleCopyImageJson = () => {
+    if (!activeId) {
+      return;
+    }
+    const zoom = Number.parseFloat(imageEditorState.zoom);
+    const position = xyToPosition(imageEditorState.posX, imageEditorState.posY);
+    const payload = {
+      gallery: {
+        [activeId]: {
+          position,
+          zoom: Number.isNaN(zoom) ? 1 : zoom,
+        },
+      },
+    };
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+    }
+  };
+
+  const handleTripleTap = (id) => {
+    const now = Date.now();
+    const info = tapTracker.current[id] || { last: 0, count: 0 };
+    if (now - info.last < 420) {
+      info.count += 1;
+    } else {
+      info.count = 1;
+    }
+    info.last = now;
+    tapTracker.current[id] = info;
+    if (info.count >= 3) {
+      info.count = 0;
+      tapTracker.current[id] = info;
+      if (window.matchMedia("(hover: none)").matches) {
+        openEditor(id);
+      }
+    }
   };
 
   return (
@@ -133,6 +247,7 @@ const GalleryPage = () => {
               event.preventDefault();
               openEditor(item.id);
             }}
+            onTouchEnd={() => handleTripleTap(item.id)}
           >
             {(pinPositions[item.id] || "center") === "center" && (
               <>
@@ -161,7 +276,14 @@ const GalleryPage = () => {
               </>
             )}
             <div className={styles.galleryPhotoFrame}>
-              <img src={item.img} alt={item.caption} />
+              <img
+                src={item.img}
+                alt={item.caption}
+                style={{
+                  objectPosition: resolveImageSettings(item.id).position,
+                  transform: `scale(${resolveImageSettings(item.id).zoom ?? 1})`,
+                }}
+              />
             </div>
           </div>
         ))}
@@ -184,9 +306,63 @@ const GalleryPage = () => {
                 <option value="corners">שתי סיכות בפינות</option>
               </select>
             </label>
+            <label className={styles.editorLabel}>
+              מיקום אופקי (ימינה/שמאלה)
+              <input
+                className={styles.editorInput}
+                type="range"
+                min="0"
+                max="100"
+                value={imageEditorState.posX}
+                onChange={(event) =>
+                  setImageEditorState((prev) => ({
+                    ...prev,
+                    posX: Number(event.target.value),
+                  }))
+                }
+              />
+            </label>
+            <label className={styles.editorLabel}>
+              מיקום אנכי (למעלה/למטה)
+              <input
+                className={styles.editorInput}
+                type="range"
+                min="0"
+                max="100"
+                value={imageEditorState.posY}
+                onChange={(event) =>
+                  setImageEditorState((prev) => ({
+                    ...prev,
+                    posY: Number(event.target.value),
+                  }))
+                }
+              />
+            </label>
+            <label className={styles.editorLabel}>
+              זום תמונה (scale)
+              <input
+                className={styles.editorInput}
+                type="number"
+                step="0.01"
+                min="0.5"
+                value={imageEditorState.zoom}
+                onChange={(event) =>
+                  setImageEditorState((prev) => ({
+                    ...prev,
+                    zoom: event.target.value,
+                  }))
+                }
+              />
+            </label>
             <div className={styles.editorActions}>
               <button className={styles.editorCancel} onClick={closeEditor}>
                 ביטול
+              </button>
+              <button
+                className={styles.editorCancel}
+                onClick={handleCopyImageJson}
+              >
+                העתקת JSON
               </button>
               <button className={styles.editorSave} onClick={saveEditor}>
                 שמירה
