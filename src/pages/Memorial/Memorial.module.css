@@ -212,12 +212,13 @@
     bottom: 16px;
     margin: 0;
     font-family: "Heebo", sans-serif;
-    font-size: clamp(22px, 3.2vw, 44px);
+    font-size: clamp(26px, 4.1vw, 52px);
     font-weight: 900;
     color: #fff;
     text-align: center;
-    text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+    text-shadow: 0 4px 12px rgba(60, 0, 90, 0.8), 0 0 18px rgba(40, 0, 70, 0.55);
     padding: 0 16px;
+    letter-spacing: 0.6px;
     z-index: 2;
 }
 
@@ -851,7 +852,25 @@
 
 @media (max-width: 768px) {
     .nitzanSection {
-        padding: 24px;
+        padding: 16px;
+    }
+
+    .nitzanSection .sectionSubtitle {
+        margin-bottom: 2px;
+    }
+
+    .nitzanSection .paragraph {
+        line-height: 1.55;
+        margin-bottom: 8px;
+    }
+
+    .nitzanSection .bioColumn {
+        gap: 12px;
+    }
+
+    .secondaryGrid {
+        margin-bottom: 40px;
+        gap: 24px;
     }
 }
 

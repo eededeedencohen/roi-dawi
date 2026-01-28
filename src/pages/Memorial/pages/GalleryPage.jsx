@@ -1,5 +1,3 @@
-import GivatiLogo from "../../../assets/roiImages/Givati.png";
-import LielGidoni from "../../../assets/roiImages/lielGidoni.jpeg";
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -7,7 +5,6 @@ import Roi4 from "../../../assets/roiImages/roi4.png";
 import Roi5 from "../../../assets/roiImages/roi5.png";
 import Roi6 from "../../../assets/roiImages/roi6.png";
 import Roi7 from "../../../assets/roiImages/roi7.jpg";
-import Roi8 from "../../../assets/roiImages/roi8.jpg";
 import Roi9 from "../../../assets/roiImages/roi9.jpg";
 import Roi10 from "../../../assets/roiImages/roi10.jpg";
 import RoiAndArie from "../../../assets/roiImages/roiAndArie.jpg";
@@ -38,7 +35,6 @@ import RoiFamily2 from "../../../assets/roiImages/roiFamily2.jpg";
 import RoiFamily3 from "../../../assets/roiImages/roiFamily3.jpg";
 import RoiFamily4 from "../../../assets/roiImages/roiFamily4.jpg";
 import RoiHapoel from "../../../assets/roiImages/roiHapoel.jpg";
-import RoiLast from "../../../assets/roiImages/roiLast.webp";
 import RoiMechina1 from "../../../assets/roiImages/roiMechina1.jpg";
 import RoiMechina2 from "../../../assets/roiImages/roiMechina2.jpg";
 import styles from "../Memorial.module.css";
@@ -51,7 +47,6 @@ const memories = [
   { id: 5, img: Roi5, caption: "שמחת נעורים" },
   { id: 6, img: Roi6, caption: "חיוך שמחזק" },
   { id: 7, img: Roi7, caption: "החיוך שכבש כל לב" },
-  { id: 8, img: Roi8, caption: "שמחת חיים אינסופית" },
   { id: 9, img: Roi9, caption: "תמיד איתנו" },
   { id: 10, img: Roi10, caption: "רגעים של אור" },
   { id: 11, img: RoiHapoel, caption: "אהבת הפועל" },
