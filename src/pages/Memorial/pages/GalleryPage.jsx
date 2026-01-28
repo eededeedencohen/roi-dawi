@@ -24,10 +24,12 @@ const memories = [
 const GalleryPage = () => {
   return (
     <section className={styles.gallerySection}>
-      <h2 className={styles.galleryTitle}>רגעים של אור</h2>
+      <h2 className={styles.galleryTitle} data-reveal>
+        רגעים של אור
+      </h2>
       <div className={styles.galleryGrid}>
         {memories.map((item) => (
-          <div key={item.id} className={styles.galleryItem}>
+          <div key={item.id} className={styles.galleryItem} data-reveal>
             <img src={item.img} alt={item.caption} />
             <div className={styles.galleryCaption}>{item.caption}</div>
           </div>

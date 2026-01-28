@@ -83,6 +83,7 @@ const HomePage = ({ onNavigate }) => {
         <div
           className={styles.heroImageWrapper}
           style={{ "--hero-height": `${mergedSettings.height || 420}px` }}
+          data-reveal
         >
           <img
             src={RoiHero}
@@ -96,7 +97,7 @@ const HomePage = ({ onNavigate }) => {
           />
           <h1 className={styles.heroImageTitle}>סמ״ר רועי דאוי הי״ד</h1>
         </div>
-        <div className={styles.heroContent}>
+        <div className={styles.heroContent} data-reveal>
           <p className={styles.heroSubtitle}>לוחם בגדוד צבר, חטיבת גבעתי</p>
 
           <div className={styles.heroInfoRow}>
@@ -122,7 +123,7 @@ const HomePage = ({ onNavigate }) => {
         </div>
       </div>
 
-      <div className={styles.introSection}>
+      <div className={styles.introSection} data-reveal>
         <h2 className={styles.introTitle}>בן הזקונים, הלוחם, החבר</h2>
         <p className={styles.introText}>
           רועי נפל באסון הנמר בקרב בצפון רצועת עזה יחד עם עוד עשרה מלוחמיו ביום

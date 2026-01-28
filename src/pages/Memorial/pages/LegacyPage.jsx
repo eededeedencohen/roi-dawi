@@ -3,12 +3,12 @@ import styles from "../Memorial.module.css";
 const LegacyPage = () => {
   return (
     <section className={styles.legacySection}>
-      <div className={styles.legacyHeader}>
+      <div className={styles.legacyHeader} data-reveal>
         <h2>הצוואה של רועי</h2>
         <p>נכתב ב-9/10, לאחר היציאה מהקרבות בכפר עזה</p>
       </div>
 
-      <div className={styles.legacyPaper}>
+      <div className={styles.legacyPaper} data-reveal>
         <div className={styles.legacyPaperTop}></div>
         <div className={styles.legacyText}>
           <p className={styles.legacyIntro}>״אבא, אמא, ניצני, עדן ותומר...״</p>

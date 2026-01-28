@@ -185,17 +185,17 @@ const BioPage = () => {
 
   return (
     <section className={styles.section}>
-      <div className={styles.sectionHeader}>
+      <div className={styles.sectionHeader} data-reveal>
         <h2 className={styles.sectionTitle}>סיפור חייו</h2>
       </div>
 
-      <p className={styles.paragraph}>
+      <p className={styles.paragraph} data-reveal>
         רועי, בן זקונים לאריה ובטי, אח קטן לעדן ותומר, נולד בשכונת קטמון
         בירושלים. ביסודי למד בביה״ס יהודה הלוי ולאחר מכן עבר לתיכון גבעת גונן
         במגמת תקשורת.
       </p>
 
-      <div className={styles.bioPair}>
+      <div className={styles.bioPair} data-reveal>
         <div className={styles.bioPairCard}>
           <div className={styles.highlightCard}>
             <h3 className={styles.highlightTitle}>
@@ -259,7 +259,7 @@ const BioPage = () => {
         </div>
       </div>
 
-      <div className={styles.bioPair}>
+      <div className={styles.bioPair} data-reveal>
         <div className={styles.bioPairCard}>
           <div className={styles.highlightCardAlt}>
             <h3 className={styles.highlightTitleAlt}>
@@ -322,7 +322,7 @@ const BioPage = () => {
         </div>
       </div>
 
-      <div className={styles.familySection}>
+      <div className={styles.familySection} data-reveal>
         <h3 className={styles.sectionSubtitle}>הנסיך של המשפחה</h3>
         <div className={styles.familyGrid}>
           <div className={styles.familyCard}>
@@ -390,7 +390,10 @@ const BioPage = () => {
         </div>
       </div>
 
-      <div className={`${styles.secondaryGrid} ${styles.nitzanSection}`}>
+      <div
+        className={`${styles.secondaryGrid} ${styles.nitzanSection}`}
+        data-reveal
+      >
         <div className={styles.bioColumn}>
           <h3 className={styles.sectionSubtitle}>
             <i className="fa-solid fa-heart"></i> המכינה וניצן
@@ -440,7 +443,7 @@ const BioPage = () => {
         </div>
       </div>
 
-      <div className={styles.darkFeature}>
+      <div className={styles.darkFeature} data-reveal>
         <div className={styles.darkFeatureInner}>
           <div className={styles.darkFeatureContent}>
             <h3>הקשר השמיימי לליאל גדעוני ז"ל</h3>

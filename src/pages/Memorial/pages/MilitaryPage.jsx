@@ -4,14 +4,14 @@ import styles from "../Memorial.module.css";
 const MilitaryPage = () => {
   return (
     <section className={styles.sectionAlt}>
-      <div className={styles.militaryHeader}>
+      <div className={styles.militaryHeader} data-reveal>
         <img src={GivatiLogo} alt="סמל גבעתי" className={styles.militaryLogo} />
         <h2 className={styles.militaryTitle}>שירות וגבורה</h2>
         <p>חטיבת גבעתי | גדוד צבר</p>
       </div>
 
       <div className={styles.timeline}>
-        <div className={styles.timelineItem}>
+        <div className={styles.timelineItem} data-reveal>
           <div className={styles.timelineDate}>מרץ 2021</div>
           <div className={styles.timelineCard}>
             <h3>הגיוס</h3>
@@ -27,7 +27,7 @@ const MilitaryPage = () => {
           </div>
         </div>
 
-        <div className={styles.timelineItem}>
+        <div className={styles.timelineItem} data-reveal>
           <div className={styles.timelineDateAccent}>7 באוקטובר 2023</div>
           <div className={styles.timelineCard}>
             <h3>פרוץ המלחמה והקרב בכפר עזה</h3>
@@ -45,7 +45,7 @@ const MilitaryPage = () => {
           </div>
         </div>
 
-        <div className={styles.timelineItem}>
+        <div className={styles.timelineItem} data-reveal>
           <div className={styles.timelineDateDark}>31 באוקטובר 2023</div>
           <div className={styles.timelineCard}>
             <h3>הנפילה - אסון הנמר</h3>
