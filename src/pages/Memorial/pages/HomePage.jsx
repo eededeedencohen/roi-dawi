@@ -68,8 +68,8 @@ const HomePage = ({ onNavigate }) => {
     const payload = {
       homeHero: {
         position: editorState.position,
-        zoom: Number.isNaN(zoom) ? mergedSettings.zoom ?? 1 : zoom,
-        height: Number.isNaN(height) ? mergedSettings.height ?? 260 : height,
+        zoom: Number.isNaN(zoom) ? (mergedSettings.zoom ?? 1) : zoom,
+        height: Number.isNaN(height) ? (mergedSettings.height ?? 260) : height,
       },
     };
 
@@ -94,9 +94,9 @@ const HomePage = ({ onNavigate }) => {
             }}
             onContextMenu={handleImageEdit}
           />
+          <h1 className={styles.heroImageTitle}>סמ״ר רועי דאוי הי״ד</h1>
         </div>
         <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>סמ״ר רועי דאוי הי״ד</h1>
           <p className={styles.heroSubtitle}>לוחם בגדוד צבר, חטיבת גבעתי</p>
 
           <div className={styles.heroInfoRow}>
