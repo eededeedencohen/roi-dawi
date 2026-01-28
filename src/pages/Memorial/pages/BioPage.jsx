@@ -339,7 +339,7 @@ const BioPage = () => {
               />
             </div>
             <div className={styles.familyHeader}>
-              <i className="fa-solid fa-link"></i>
+              <i className="fa-solid fa-crown"></i>
               <h4>האחות עדן</h4>
             </div>
             <p>

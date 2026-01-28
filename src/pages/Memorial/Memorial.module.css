@@ -724,11 +724,21 @@
 }
 
 .familyPhotoCard {
-    border-radius: 18px;
+    position: relative;
+    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
-    background: #fff;
+    box-shadow: 0 22px 40px rgba(15, 23, 42, 0.18);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     text-align: center;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.familyPhotoCard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0) 60%, rgba(15, 23, 42, 0.18) 100%);
+    pointer-events: none;
 }
 
 .familyPhotoCard img {
@@ -741,9 +751,11 @@
 
 .familyPhotoCard p {
     margin: 0;
-    padding: 14px 16px;
-    font-size: 14px;
-    color: #6b7280;
+    padding: 16px 18px 18px;
+    font-size: 15px;
+    color: #475569;
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 
 .secondaryGrid {
