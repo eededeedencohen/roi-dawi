@@ -1,0 +1,24 @@
+{
+  "bio": {
+    "hapoel": {
+      "position": "center 20%",
+      "zoom": 1.05
+    },
+    "mechina": {
+      "position": "center 35%",
+      "zoom": 1.0
+    },
+    "eden": {
+      "position": "center 7%",
+      "zoom": 1.0
+    },
+    "tomer": {
+      "position": "center 35%",
+      "zoom": 1.0
+    },
+    "family": {
+      "position": "center 30%",
+      "zoom": 1.0
+    }
+  }
+}

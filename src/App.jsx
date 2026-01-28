@@ -1,9 +1,9 @@
-import RoiDawi from "./pages/RoiDawi/RoiDawi.jsx";
+import Memorial from "./pages/Memorial/Memorial.jsx";
 
 function App() {
   return (
     <>
-      <RoiDawi />
+      <Memorial />
     </>
   );
 }

@@ -1,5 +1,5 @@
 /* יבוא פונט אחיד לכל המכשירים */
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Heebo:wght@300;400;700;900&display=swap');
 
 :root {
   --purple: rgb(86, 58, 116);
@@ -13,7 +13,7 @@ body {
   padding: 0;
   /* שימוש ב-dvh גם כאן למניעת גלילה */
   min-height: 100dvh;
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Assistant', sans-serif;
   /* הפונט החדש */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -30,7 +30,7 @@ body {
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   /* דורס את הגדרות ברירת המחדל של אייפון */
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Assistant', sans-serif;
 }
 
 *:focus:not(:focus-visible) {
