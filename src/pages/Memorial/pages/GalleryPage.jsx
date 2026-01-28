@@ -87,6 +87,9 @@ const GalleryPage = () => {
   const storageKey = "galleryPinPositions";
   const imageOverridesKey = "galleryImageOverrides";
   const tapTracker = useRef({});
+  const ignoreClickUntil = useRef(0);
+  const itemRefs = useRef({});
+  const touchTracker = useRef({});
   const [pinPositions, setPinPositions] = useState(() => {
     try {
       const saved = localStorage.getItem(storageKey);
@@ -226,10 +229,74 @@ const GalleryPage = () => {
     if (info.count >= 3) {
       info.count = 0;
       tapTracker.current[id] = info;
+      ignoreClickUntil.current = now + 500;
       if (window.matchMedia("(hover: none)").matches) {
         openEditor(id);
       }
+      return true;
     }
+    return false;
+  };
+
+  const handleTouchStart = (id, event) => {
+    const touch = event.touches[0];
+    touchTracker.current[id] = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+    };
+  };
+
+  const handleTouchMove = (id, event) => {
+    const info = touchTracker.current[id];
+    if (!info) {
+      return;
+    }
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - info.startX);
+    const dy = Math.abs(touch.clientY - info.startY);
+    if (dx > 12 || dy > 12) {
+      info.moved = true;
+    }
+    touchTracker.current[id] = info;
+  };
+
+  const handleTouchEnd = (id, event) => {
+    const info = touchTracker.current[id];
+    const touch = event.changedTouches[0];
+    const dx = info ? Math.abs(touch.clientX - info.startX) : 0;
+    const dy = info ? Math.abs(touch.clientY - info.startY) : 0;
+    touchTracker.current[id] = null;
+    if (dx > 12 || dy > 12 || info?.moved) {
+      return;
+    }
+    event.preventDefault();
+    const opened = handleTripleTap(id);
+    if (!opened) {
+      handleToggleActive(id, "touch");
+    }
+  };
+
+  const handleToggleActive = (id, source = "click") => {
+    if (!window.matchMedia("(hover: none)").matches) {
+      return;
+    }
+    if (source === "click" && Date.now() < ignoreClickUntil.current) {
+      return;
+    }
+    if (source === "touch") {
+      ignoreClickUntil.current = Date.now() + 900;
+    }
+    setActiveId((prev) => {
+      const next = prev === id ? null : id;
+      if (next && itemRefs.current[id]) {
+        itemRefs.current[id].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
+      return next;
+    });
   };
 
   return (
@@ -241,13 +308,23 @@ const GalleryPage = () => {
         {memories.map((item) => (
           <div
             key={item.id}
-            className={styles.galleryItem}
+            className={`${styles.galleryItem} ${
+              activeId === item.id ? styles.galleryItemActive : ""
+            }`}
             data-reveal
             onContextMenu={(event) => {
               event.preventDefault();
               openEditor(item.id);
             }}
-            onTouchEnd={() => handleTripleTap(item.id)}
+            onTouchStart={(event) => handleTouchStart(item.id, event)}
+            onTouchMove={(event) => handleTouchMove(item.id, event)}
+            onTouchEnd={(event) => handleTouchEnd(item.id, event)}
+            onClick={() => handleToggleActive(item.id, "click")}
+            ref={(node) => {
+              if (node) {
+                itemRefs.current[item.id] = node;
+              }
+            }}
           >
             {(pinPositions[item.id] || "center") === "center" && (
               <>
@@ -354,6 +431,10 @@ const GalleryPage = () => {
                 }
               />
             </label>
+            <p className={styles.editorSummary}>
+              סיכום: {Math.round(imageEditorState.posX)}% ,{" "}
+              {Math.round(imageEditorState.posY)}% | זום {imageEditorState.zoom}
+            </p>
             <div className={styles.editorActions}>
               <button className={styles.editorCancel} onClick={closeEditor}>
                 ביטול

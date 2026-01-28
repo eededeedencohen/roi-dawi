@@ -1294,8 +1294,8 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #f5d27a 0%, #c07a1a 55%, #7a3f00 100%);
-    box-shadow: 0 4px 8px rgba(63, 29, 0, 0.45);
+    background: radial-gradient(circle at 30% 30%, #c8a2ff 0%, #7b2cbf 55%, #3b0a64 100%);
+    box-shadow: 0 4px 8px rgba(59, 10, 100, 0.45);
     z-index: 2;
     transition: transform 0.22s ease, box-shadow 0.22s ease;
     transform-origin: center;
@@ -1358,7 +1358,19 @@
     transition-delay: 0.2s;
 }
 
+.galleryItemActive {
+    transform: rotate(0deg) scale(1.22);
+    box-shadow: 0 48px 90px rgba(35, 24, 10, 0.5);
+    z-index: 10;
+    transition-delay: 0.2s;
+}
+
 .galleryItem:hover .galleryPin {
+    transform: translateY(-32px) rotate(-12deg) scale(1.05);
+    box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
+}
+
+.galleryItemActive .galleryPin {
     transform: translateY(-32px) rotate(-12deg) scale(1.05);
     box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
 }
@@ -1368,9 +1380,26 @@
     transform: translateX(-50%) scaleY(1);
 }
 
+.galleryItemActive .galleryPin::after {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+}
+
 .galleryItem:hover .galleryPinShadow {
     transform: translateY(-16px) scale(0.7);
     opacity: 0.2;
+}
+
+.galleryItemActive .galleryPinShadow {
+    transform: translateY(-16px) scale(0.7);
+    opacity: 0.2;
+}
+
+.editorSummary {
+    margin: 6px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--givati-purple);
 }
 
 .galleryItem:nth-child(3n) {
@@ -1550,6 +1579,10 @@
     }
 
     .galleryItem:hover {
+        transform: rotate(0deg) scale(1.12);
+    }
+
+    .galleryItemActive {
         transform: rotate(0deg) scale(1.12);
     }
 
