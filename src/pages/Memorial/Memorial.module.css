@@ -710,10 +710,12 @@
 
     .galleryItem {
         cursor: pointer;
-        -webkit-tap-highlight-color: rgba(128, 0, 128, 0.08);
-        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: pan-y;
         user-select: none;
         will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
 
     .galleryItem:hover {
@@ -723,15 +725,25 @@
     }
 
     .galleryItemActive {
-        transform: translateY(0) rotate(0deg) scale(1.18) !important;
+        transform: translateY(0) rotate(0deg) scale(1.16) !important;
         box-shadow: 0 48px 90px rgba(128, 0, 128, 0.3);
         z-index: 10;
-        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+        transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
     }
 
-    .galleryItem:active:not(.galleryItemActive) {
-        transform: translateY(0) rotate(var(--gallery-rotate)) scale(0.96) !important;
-        transition: transform 0.08s ease-out;
+    .galleryItemActive .galleryPin {
+        transform: translateY(-32px) rotate(-12deg) scale(1.05);
+        box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
+    }
+
+    .galleryItemActive .galleryPin::after {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+    }
+
+    .galleryItemActive .galleryPinShadow {
+        transform: translateY(-16px) scale(0.7);
+        opacity: 0.2;
     }
 }
 

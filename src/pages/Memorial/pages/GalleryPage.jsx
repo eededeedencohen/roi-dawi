@@ -86,11 +86,8 @@ const memories = [
 const GalleryPage = () => {
   const storageKey = "galleryPinPositions";
   const imageOverridesKey = "galleryImageOverrides";
-  const tapTracker = useRef({});
-  const ignoreClickUntil = useRef(0);
-  const itemRefs = useRef({});
   const touchTracker = useRef({});
-  const [pinPositions, setPinPositions] = useState(() => {
+  const [pinPositions] = useState(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : {};
@@ -98,7 +95,7 @@ const GalleryPage = () => {
       return {};
     }
   });
-  const [imageOverrides, setImageOverrides] = useState(() => {
+  const [imageOverrides] = useState(() => {
     try {
       const saved = localStorage.getItem(imageOverridesKey);
       return saved ? JSON.parse(saved) : {};
@@ -106,43 +103,7 @@ const GalleryPage = () => {
       return {};
     }
   });
-  const [editorOpen, setEditorOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
-  const [tempPin, setTempPin] = useState("center");
-  const [imageEditorState, setImageEditorState] = useState({
-    posX: 50,
-    posY: 50,
-    zoom: "1",
-  });
-
-  const positionToXY = (position) => {
-    if (!position) {
-      return { x: 50, y: 50 };
-    }
-    const [rawX = "center", rawY = "center"] = position.split(" ");
-    const mapToken = (token, axis) => {
-      if (token.endsWith("%")) {
-        const value = Number.parseFloat(token.replace("%", ""));
-        return Number.isNaN(value) ? 50 : Math.min(100, Math.max(0, value));
-      }
-      if (token === "left") {
-        return 0;
-      }
-      if (token === "right") {
-        return 100;
-      }
-      if (token === "top") {
-        return 0;
-      }
-      if (token === "bottom") {
-        return 100;
-      }
-      return axis === "x" ? 50 : 50;
-    };
-    return { x: mapToken(rawX, "x"), y: mapToken(rawY, "y") };
-  };
-
-  const xyToPosition = (x, y) => `${Math.round(x)}% ${Math.round(y)}%`;
 
   const resolveImageSettings = (id) => {
     const base = imageSettings.gallery?.[id] || {
@@ -153,111 +114,19 @@ const GalleryPage = () => {
     return { ...base, ...overrides };
   };
 
-  const openEditor = (id) => {
-    setActiveId(id);
-    setTempPin(pinPositions[id] || "center");
-    const merged = resolveImageSettings(id);
-    const { x, y } = positionToXY(merged.position || "center center");
-    setImageEditorState({
-      posX: x,
-      posY: y,
-      zoom: String(merged.zoom ?? 1),
-    });
-    setEditorOpen(true);
-  };
-
-  const closeEditor = () => {
-    setEditorOpen(false);
-    setActiveId(null);
-  };
-
-  const saveEditor = () => {
-    if (!activeId) {
-      closeEditor();
-      return;
-    }
-    const next = { ...pinPositions, [activeId]: tempPin };
-    setPinPositions(next);
-    localStorage.setItem(storageKey, JSON.stringify(next));
-
-    const zoom = Number.parseFloat(imageEditorState.zoom);
-    const position = xyToPosition(imageEditorState.posX, imageEditorState.posY);
-    const updatedImageOverrides = {
-      ...imageOverrides,
-      [activeId]: {
-        position,
-        zoom: Number.isNaN(zoom) ? 1 : zoom,
-      },
-    };
-    setImageOverrides(updatedImageOverrides);
-    localStorage.setItem(
-      imageOverridesKey,
-      JSON.stringify(updatedImageOverrides),
-    );
-    closeEditor();
-  };
-
-  const handleCopyImageJson = () => {
-    if (!activeId) {
-      return;
-    }
-    const zoom = Number.parseFloat(imageEditorState.zoom);
-    const position = xyToPosition(imageEditorState.posX, imageEditorState.posY);
-    const payload = {
-      gallery: {
-        [activeId]: {
-          position,
-          zoom: Number.isNaN(zoom) ? 1 : zoom,
-        },
-      },
-    };
-    if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-    }
-  };
-
-  const handleTripleTap = (id) => {
-    const now = Date.now();
-    const info = tapTracker.current[id] || { last: 0, count: 0 };
-    if (now - info.last < 420) {
-      info.count += 1;
-    } else {
-      info.count = 1;
-    }
-    info.last = now;
-    tapTracker.current[id] = info;
-    if (info.count >= 3) {
-      info.count = 0;
-      tapTracker.current[id] = info;
-      ignoreClickUntil.current = now + 500;
-      if (window.matchMedia("(hover: none)").matches) {
-        openEditor(id);
-      }
-      return true;
-    }
-    return false;
-  };
-
   const handleTouchStart = (id, event) => {
     const touch = event.touches[0];
     touchTracker.current[id] = {
-      startX: touch.clientX,
       startY: touch.clientY,
       startTime: Date.now(),
-      moved: false,
+      isScrolling: false,
     };
   };
 
-  const handleTouchMove = (id, event) => {
+  const handleTouchMove = (id) => {
     const info = touchTracker.current[id];
-    if (!info || info.moved) {
-      return;
-    }
-    const touch = event.touches[0];
-    const dx = Math.abs(touch.clientX - info.startX);
-    const dy = Math.abs(touch.clientY - info.startY);
-    if (dx > 8 || dy > 8) {
-      info.moved = true;
+    if (info && !info.isScrolling) {
+      info.isScrolling = true;
     }
   };
 
@@ -268,31 +137,21 @@ const GalleryPage = () => {
     }
 
     const timeDiff = Date.now() - info.startTime;
-    const wasMoved = info.moved;
+    const isScrolling = info.isScrolling;
     touchTracker.current[id] = null;
 
-    if (wasMoved || timeDiff > 300) {
-      return;
-    }
-
-    const opened = handleTripleTap(id);
-    if (!opened) {
+    // Only toggle if it was a quick tap without scrolling
+    if (!isScrolling && timeDiff < 300) {
       event.preventDefault();
-      handleToggleActive(id, "touch");
+      setActiveId((prev) => (prev === id ? null : id));
     }
   };
 
-  const handleToggleActive = (id, source = "click") => {
-    if (!window.matchMedia("(hover: none)").matches) {
-      return;
+  const handleClick = (id) => {
+    // Desktop click handler
+    if (window.matchMedia("(hover: hover)").matches) {
+      setActiveId((prev) => (prev === id ? null : id));
     }
-    if (source === "click" && Date.now() < ignoreClickUntil.current) {
-      return;
-    }
-    if (source === "touch") {
-      ignoreClickUntil.current = Date.now() + 400;
-    }
-    setActiveId((prev) => (prev === id ? null : id));
   };
 
   useEffect(() => {
@@ -329,19 +188,10 @@ const GalleryPage = () => {
               activeId === item.id ? styles.galleryItemActive : ""
             }`}
             data-reveal
-            onContextMenu={(event) => {
-              event.preventDefault();
-              openEditor(item.id);
-            }}
             onTouchStart={(event) => handleTouchStart(item.id, event)}
-            onTouchMove={(event) => handleTouchMove(item.id, event)}
+            onTouchMove={() => handleTouchMove(item.id)}
             onTouchEnd={(event) => handleTouchEnd(item.id, event)}
-            onClick={() => handleToggleActive(item.id, "click")}
-            ref={(node) => {
-              if (node) {
-                itemRefs.current[item.id] = node;
-              }
-            }}
+            onClick={() => handleClick(item.id)}
           >
             {(pinPositions[item.id] || "center") === "center" && (
               <>
@@ -382,93 +232,6 @@ const GalleryPage = () => {
           </div>
         ))}
       </div>
-      {editorOpen && (
-        <div className={styles.editorOverlay} onClick={closeEditor}>
-          <div
-            className={styles.editorModal}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3 className={styles.editorTitle}>מיקום הסיכות</h3>
-            <label className={styles.editorLabel}>
-              בחר מיקום:
-              <select
-                className={styles.editorInput}
-                value={tempPin}
-                onChange={(event) => setTempPin(event.target.value)}
-              >
-                <option value="center">סיכה באמצע</option>
-                <option value="corners">שתי סיכות בפינות</option>
-              </select>
-            </label>
-            <label className={styles.editorLabel}>
-              מיקום אופקי (ימינה/שמאלה)
-              <input
-                className={styles.editorInput}
-                type="range"
-                min="0"
-                max="100"
-                value={imageEditorState.posX}
-                onChange={(event) =>
-                  setImageEditorState((prev) => ({
-                    ...prev,
-                    posX: Number(event.target.value),
-                  }))
-                }
-              />
-            </label>
-            <label className={styles.editorLabel}>
-              מיקום אנכי (למעלה/למטה)
-              <input
-                className={styles.editorInput}
-                type="range"
-                min="0"
-                max="100"
-                value={imageEditorState.posY}
-                onChange={(event) =>
-                  setImageEditorState((prev) => ({
-                    ...prev,
-                    posY: Number(event.target.value),
-                  }))
-                }
-              />
-            </label>
-            <label className={styles.editorLabel}>
-              זום תמונה (scale)
-              <input
-                className={styles.editorInput}
-                type="number"
-                step="0.01"
-                min="0.5"
-                value={imageEditorState.zoom}
-                onChange={(event) =>
-                  setImageEditorState((prev) => ({
-                    ...prev,
-                    zoom: event.target.value,
-                  }))
-                }
-              />
-            </label>
-            <p className={styles.editorSummary}>
-              סיכום: {Math.round(imageEditorState.posX)}% ,{" "}
-              {Math.round(imageEditorState.posY)}% | זום {imageEditorState.zoom}
-            </p>
-            <div className={styles.editorActions}>
-              <button className={styles.editorCancel} onClick={closeEditor}>
-                ביטול
-              </button>
-              <button
-                className={styles.editorCancel}
-                onClick={handleCopyImageJson}
-              >
-                העתקת JSON
-              </button>
-              <button className={styles.editorSave} onClick={saveEditor}>
-                שמירה
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
