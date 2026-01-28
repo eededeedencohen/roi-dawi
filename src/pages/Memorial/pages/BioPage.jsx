@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import RoiHapoel from "../../../assets/roiImages/roiHapoel.jpg";
 import RoiAndArieHapoel from "../../../assets/roiImages/RoiAndArieHapoel.jpeg";
 import RoiMechina from "../../../assets/roiImages/roiMechina1.jpg";
@@ -11,10 +11,12 @@ import RoiAndEden from "../../../assets/roiImages/roiAndEden2.jpg";
 import RoiAndTomer from "../../../assets/roiImages/roiAndTomer.jpg";
 // import RoiFamily from "../../../assets/roiImages/roiAndTomerAndEden2.jpg";
 import RoiFamily from "../../../assets/roiImages/roiDawiFamily.jpg";
+import LielGidoni from "../../../assets/roiImages/lielGidoni.jpeg";
 import imageSettings from "../../../data/imageSettings.json";
 import styles from "../Memorial.module.css";
 
 const STORAGE_KEY = "roiImageOverrides";
+const SWIPE_THRESHOLD = 40;
 
 const BioPage = () => {
   const mechinaImages = [RoiMechina, RoiMechinaAlt];
@@ -28,6 +30,12 @@ const BioPage = () => {
     RoiAndNitzan5,
   ];
   const [nitzanIndex, setNitzanIndex] = useState(0);
+  const hapoelTouchStartX = useRef(null);
+  const mechinaTouchStartX = useRef(null);
+  const nitzanTouchStartX = useRef(null);
+  const hapoelTimerRef = useRef(null);
+  const mechinaTimerRef = useRef(null);
+  const nitzanTimerRef = useRef(null);
   const [overrides, setOverrides] = useState(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
@@ -48,28 +56,40 @@ const BioPage = () => {
     zoom: "1",
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMechinaIndex((prev) => (prev + 1) % mechinaImages.length);
-    }, 4000);
+  const startTimer = (ref, delay, setIndex, length) => {
+    if (ref.current) {
+      clearInterval(ref.current);
+    }
+    ref.current = setInterval(() => {
+      setIndex((prev) => (prev + 1) % length);
+    }, delay);
+  };
 
-    return () => clearInterval(interval);
+  useEffect(() => {
+    startTimer(mechinaTimerRef, 4000, setMechinaIndex, mechinaImages.length);
+    return () => {
+      if (mechinaTimerRef.current) {
+        clearInterval(mechinaTimerRef.current);
+      }
+    };
   }, [mechinaImages.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setHapoelIndex((prev) => (prev + 1) % hapoelImages.length);
-    }, 4500);
-
-    return () => clearInterval(interval);
+    startTimer(hapoelTimerRef, 4500, setHapoelIndex, hapoelImages.length);
+    return () => {
+      if (hapoelTimerRef.current) {
+        clearInterval(hapoelTimerRef.current);
+      }
+    };
   }, [hapoelImages.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNitzanIndex((prev) => (prev + 1) % nitzanImages.length);
-    }, 4200);
-
-    return () => clearInterval(interval);
+    startTimer(nitzanTimerRef, 4200, setNitzanIndex, nitzanImages.length);
+    return () => {
+      if (nitzanTimerRef.current) {
+        clearInterval(nitzanTimerRef.current);
+      }
+    };
   }, [nitzanImages.length]);
 
   const handleImageEdit = (event, key) => {
@@ -103,6 +123,64 @@ const BioPage = () => {
     setOverrides(nextOverrides);
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextOverrides));
     handleCloseEditor();
+  };
+
+  const goNext = (setIndex, length) => setIndex((prev) => (prev + 1) % length);
+  const goPrev = (setIndex, length) =>
+    setIndex((prev) => (prev - 1 + length) % length);
+
+  const handleHapoelNext = () => {
+    goNext(setHapoelIndex, hapoelImages.length);
+    startTimer(hapoelTimerRef, 4500, setHapoelIndex, hapoelImages.length);
+  };
+
+  const handleHapoelPrev = () => {
+    goPrev(setHapoelIndex, hapoelImages.length);
+    startTimer(hapoelTimerRef, 4500, setHapoelIndex, hapoelImages.length);
+  };
+
+  const handleMechinaNext = () => {
+    goNext(setMechinaIndex, mechinaImages.length);
+    startTimer(mechinaTimerRef, 4000, setMechinaIndex, mechinaImages.length);
+  };
+
+  const handleMechinaPrev = () => {
+    goPrev(setMechinaIndex, mechinaImages.length);
+    startTimer(mechinaTimerRef, 4000, setMechinaIndex, mechinaImages.length);
+  };
+
+  const handleNitzanNext = () => {
+    goNext(setNitzanIndex, nitzanImages.length);
+    startTimer(nitzanTimerRef, 4200, setNitzanIndex, nitzanImages.length);
+  };
+
+  const handleNitzanPrev = () => {
+    goPrev(setNitzanIndex, nitzanImages.length);
+    startTimer(nitzanTimerRef, 4200, setNitzanIndex, nitzanImages.length);
+  };
+
+  const handleTouchStart = (ref) => (event) => {
+    ref.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (ref, onNext, onPrev) => (event) => {
+    if (ref.current === null) {
+      return;
+    }
+    const endX = event.changedTouches[0]?.clientX ?? null;
+    if (endX === null) {
+      ref.current = null;
+      return;
+    }
+    const deltaX = endX - ref.current;
+    if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+      if (deltaX < 0) {
+        onNext();
+      } else {
+        onPrev();
+      }
+    }
+    ref.current = null;
   };
 
   return (
@@ -141,7 +219,23 @@ const BioPage = () => {
           </div>
         </div>
         <div className={styles.bioPairImage}>
-          <div className={styles.imageCard}>
+          <div
+            className={`${styles.imageCard} ${styles.imageCarousel}`}
+            onTouchStart={handleTouchStart(hapoelTouchStartX)}
+            onTouchEnd={handleTouchEnd(
+              hapoelTouchStartX,
+              handleHapoelNext,
+              handleHapoelPrev,
+            )}
+          >
+            <button
+              type="button"
+              className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+              onClick={handleHapoelPrev}
+              aria-label="תמונה קודמת"
+            >
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
             <img
               src={hapoelImages[hapoelIndex]}
               alt="רועי במשחק הפועל"
@@ -153,6 +247,14 @@ const BioPage = () => {
               onContextMenu={(event) => handleImageEdit(event, "hapoel")}
               key={hapoelImages[hapoelIndex]}
             />
+            <button
+              type="button"
+              className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+              onClick={handleHapoelNext}
+              aria-label="תמונה הבאה"
+            >
+              <i className="fa-solid fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -180,7 +282,23 @@ const BioPage = () => {
           </div>
         </div>
         <div className={styles.bioPairImage}>
-          <div className={styles.imageCard}>
+          <div
+            className={`${styles.imageCard} ${styles.imageCarousel}`}
+            onTouchStart={handleTouchStart(mechinaTouchStartX)}
+            onTouchEnd={handleTouchEnd(
+              mechinaTouchStartX,
+              handleMechinaNext,
+              handleMechinaPrev,
+            )}
+          >
+            <button
+              type="button"
+              className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+              onClick={handleMechinaPrev}
+              aria-label="תמונה קודמת"
+            >
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
             <img
               src={mechinaImages[mechinaIndex]}
               alt="רועי במכינה"
@@ -192,6 +310,14 @@ const BioPage = () => {
               onContextMenu={(event) => handleImageEdit(event, "mechina")}
               key={mechinaImages[mechinaIndex]}
             />
+            <button
+              type="button"
+              className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+              onClick={handleMechinaNext}
+              aria-label="תמונה הבאה"
+            >
+              <i className="fa-solid fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -213,7 +339,7 @@ const BioPage = () => {
               />
             </div>
             <div className={styles.familyHeader}>
-              <i className="fa-solid fa-heart"></i>
+              <i className="fa-solid fa-link"></i>
               <h4>האחות עדן</h4>
             </div>
             <p>
@@ -264,9 +390,11 @@ const BioPage = () => {
         </div>
       </div>
 
-      <div className={styles.secondaryGrid}>
+      <div className={`${styles.secondaryGrid} ${styles.nitzanSection}`}>
         <div className={styles.bioColumn}>
-          <h3 className={styles.sectionSubtitle}>המכינה וניצן</h3>
+          <h3 className={styles.sectionSubtitle}>
+            <i className="fa-solid fa-heart"></i> המכינה וניצן
+          </h3>
           <p className={styles.paragraph}>
             רועי הגיע למכינה קדם צבאית "דרך ארץ" מתוך רצון לפיתוח אישי. הוא יצא
             משם "רועי פרו-מקס" - גרסה משופרת, חזקה ועוצמתית של עצמו. במכינה הכיר
@@ -278,36 +406,73 @@ const BioPage = () => {
             ביניהם הייתה מלאה בשמחת חיים, אושר וצחוק.
           </p>
         </div>
-        <div className={`${styles.imageCard} ${styles.squareImageCard}`}>
+        <div
+          className={`${styles.imageCard} ${styles.squareImageCard} ${styles.imageCarousel} ${styles.nitzanImageCard}`}
+          onTouchStart={handleTouchStart(nitzanTouchStartX)}
+          onTouchEnd={handleTouchEnd(
+            nitzanTouchStartX,
+            handleNitzanNext,
+            handleNitzanPrev,
+          )}
+        >
+          <button
+            type="button"
+            className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+            onClick={handleNitzanPrev}
+            aria-label="תמונה קודמת"
+          >
+            <i className="fa-solid fa-chevron-left"></i>
+          </button>
           <img
             src={nitzanImages[nitzanIndex]}
             alt="רועי וניצן"
             className={styles.imageFade}
             key={nitzanImages[nitzanIndex]}
           />
+          <button
+            type="button"
+            className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+            onClick={handleNitzanNext}
+            aria-label="תמונה הבאה"
+          >
+            <i className="fa-solid fa-chevron-right"></i>
+          </button>
         </div>
       </div>
 
       <div className={styles.darkFeature}>
-        <h3>הקשר השמיימי לליאל גדעוני ז"ל</h3>
-        <p>
-          את סרט הגמר שלו בתקשורת הקדישו רועי וחבריו לסמ"ר ליאל גדעוני הי"ד שנפל
-          ב"צוק איתן". רועי אימץ את משפטו של ליאל:
-          <strong>״תחייכו כי חיוך זה שמחה ושמחה זה הכוח להמשיך הלאה״</strong>
-          כדרך חיים.
-        </p>
-        <div className={styles.darkFeatureColumns}>
-          <ul>
-            <li>שניהם גדלו באותה שכונה (קטמון)</li>
-            <li>למדו באותו תיכון אצל אותה מחנכת</li>
-            <li>אהדו את אותה קבוצה (הפועל ירושלים)</li>
-          </ul>
-          <ul>
-            <li>שניהם נולדו באותו תאריך: 5/11</li>
-            <li>רועי התגייס לגבעתי בעקבות ליאל</li>
-            <li>ליאל לימד את תומר מתמטיקה</li>
-            <li>שניהם נהרגו ברצועת עזה הארורה למען עם ישראל</li>
-          </ul>
+        <div className={styles.darkFeatureInner}>
+          <div className={styles.darkFeatureContent}>
+            <h3>הקשר השמיימי לליאל גדעוני ז"ל</h3>
+            <p>
+              את סרט הגמר שלו בתקשורת הקדישו רועי וחבריו לסמ"ר ליאל גדעוני הי"ד
+              שנפל ב"צוק איתן". רועי אימץ את משפטו של ליאל:
+              <strong>
+                ״תחייכו כי חיוך זה שמחה ושמחה זה הכוח להמשיך הלאה״
+              </strong>
+              כדרך חיים.
+            </p>
+            <div className={styles.darkFeatureColumns}>
+              <ul>
+                <li>שניהם גדלו באותה שכונה (קטמון)</li>
+                <li>למדו באותו תיכון אצל אותה מחנכת</li>
+                <li>אהדו את אותה קבוצה (הפועל ירושלים)</li>
+              </ul>
+              <ul>
+                <li>שניהם נולדו באותו תאריך: 5/11</li>
+                <li>רועי התגייס לגבעתי בעקבות ליאל</li>
+                <li>ליאל לימד את תומר מתמטיקה</li>
+                <li>שניהם נהרגו ברצועת עזה הארורה למען עם ישראל</li>
+              </ul>
+            </div>
+          </div>
+          <div className={styles.darkFeatureAvatarWrap}>
+            <img
+              src={LielGidoni}
+              alt="סמ״ר ליאל גדעוני"
+              className={styles.darkFeatureAvatar}
+            />
+          </div>
         </div>
       </div>
 

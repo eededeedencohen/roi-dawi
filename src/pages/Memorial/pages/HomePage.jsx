@@ -82,7 +82,7 @@ const HomePage = ({ onNavigate }) => {
       <div className={styles.heroSection}>
         <div
           className={styles.heroImageWrapper}
-          style={{ height: `${mergedSettings.height || 260}px` }}
+          style={{ "--hero-height": `${mergedSettings.height || 420}px` }}
         >
           <img
             src={RoiHero}
