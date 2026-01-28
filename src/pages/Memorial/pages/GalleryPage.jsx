@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -82,19 +83,116 @@ const memories = [
 ];
 
 const GalleryPage = () => {
+  const storageKey = "galleryPinPositions";
+  const [pinPositions, setPinPositions] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [activeId, setActiveId] = useState(null);
+  const [tempPin, setTempPin] = useState("center");
+
+  const openEditor = (id) => {
+    setActiveId(id);
+    setTempPin(pinPositions[id] || "center");
+    setEditorOpen(true);
+  };
+
+  const closeEditor = () => {
+    setEditorOpen(false);
+    setActiveId(null);
+  };
+
+  const saveEditor = () => {
+    if (!activeId) {
+      closeEditor();
+      return;
+    }
+    const next = { ...pinPositions, [activeId]: tempPin };
+    setPinPositions(next);
+    localStorage.setItem(storageKey, JSON.stringify(next));
+    closeEditor();
+  };
+
   return (
     <section className={styles.gallerySection}>
       <h2 className={styles.galleryTitle} data-reveal>
-        רגעים של אור
+        רגעים שתלויים בלב
       </h2>
       <div className={styles.galleryGrid}>
         {memories.map((item) => (
-          <div key={item.id} className={styles.galleryItem} data-reveal>
+          <div
+            key={item.id}
+            className={styles.galleryItem}
+            data-reveal
+            onContextMenu={(event) => {
+              event.preventDefault();
+              openEditor(item.id);
+            }}
+          >
+            {(pinPositions[item.id] || "center") === "center" && (
+              <>
+                <span
+                  className={`${styles.galleryPin} ${styles.galleryPinCenter}`}
+                />
+                <span
+                  className={`${styles.galleryPinShadow} ${styles.galleryPinShadowCenter}`}
+                />
+              </>
+            )}
+            {(pinPositions[item.id] || "center") === "corners" && (
+              <>
+                <span
+                  className={`${styles.galleryPin} ${styles.galleryPinLeft}`}
+                />
+                <span
+                  className={`${styles.galleryPinShadow} ${styles.galleryPinShadowLeft}`}
+                />
+                <span
+                  className={`${styles.galleryPin} ${styles.galleryPinRight}`}
+                />
+                <span
+                  className={`${styles.galleryPinShadow} ${styles.galleryPinShadowRight}`}
+                />
+              </>
+            )}
             <img src={item.img} alt={item.caption} />
-            <div className={styles.galleryCaption}>{item.caption}</div>
           </div>
         ))}
       </div>
+      {editorOpen && (
+        <div className={styles.editorOverlay} onClick={closeEditor}>
+          <div
+            className={styles.editorModal}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 className={styles.editorTitle}>מיקום הסיכות</h3>
+            <label className={styles.editorLabel}>
+              בחר מיקום:
+              <select
+                className={styles.editorInput}
+                value={tempPin}
+                onChange={(event) => setTempPin(event.target.value)}
+              >
+                <option value="center">סיכה באמצע</option>
+                <option value="corners">שתי סיכות בפינות</option>
+              </select>
+            </label>
+            <div className={styles.editorActions}>
+              <button className={styles.editorCancel} onClick={closeEditor}>
+                ביטול
+              </button>
+              <button className={styles.editorSave} onClick={saveEditor}>
+                שמירה
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
