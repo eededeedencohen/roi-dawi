@@ -118,15 +118,24 @@ const GalleryPage = () => {
     const touch = event.touches[0];
     touchTracker.current[id] = {
       startY: touch.clientY,
+      startX: touch.clientX, // שומרים גם את מיקום X
       startTime: Date.now(),
       isScrolling: false,
     };
   };
 
-  const handleTouchMove = (id) => {
+  const handleTouchMove = (id, event) => {
     const info = touchTracker.current[id];
     if (info && !info.isScrolling) {
-      info.isScrolling = true;
+      const touch = event.touches[0];
+      // מחשבים כמה האצבע זזה
+      const moveY = Math.abs(touch.clientY - info.startY);
+      const moveX = Math.abs(touch.clientX - info.startX);
+
+      // אם התזוזה גדולה מ-10 פיקסלים (לכל כיוון), נחשיב זאת כגלילה
+      if (moveY > 10 || moveX > 10) {
+        info.isScrolling = true;
+      }
     }
   };
 
@@ -140,10 +149,11 @@ const GalleryPage = () => {
     const isScrolling = info.isScrolling;
     touchTracker.current[id] = null;
 
+    // רק אם לא הייתה גלילה והלחיצה הייתה קצרה
     if (!isScrolling && timeDiff < 300) {
-      // אם הלחיצה הייתה קצרה וללא גלילה - נבצע פעולה
-      // במקרה הזה לא משתמשים ב-preventDefault כדי לא לחסום התנהגות טבעית
-      // אלא אם כן זה ממש נדרש
+      // מונעים אירועי ברירת מחדל כדי למנוע התנגשויות (אופציונלי, תלוי התנהגות)
+      // event.preventDefault();
+
       if (activeId !== id) {
         setActiveId(id);
       } else {
@@ -153,6 +163,7 @@ const GalleryPage = () => {
   };
 
   const handleClick = (id) => {
+    // מנגנון זה עובד רק במכשירים עם עכבר, כדי לא להתנגש עם ה-Touch
     if (window.matchMedia("(hover: hover)").matches) {
       setActiveId((prev) => (prev === id ? null : id));
     }
@@ -163,13 +174,10 @@ const GalleryPage = () => {
     if (activeId !== null) {
       const el = document.getElementById(`gallery-item-${activeId}`);
       if (el) {
-        // חישוב המיקום המדויק לגלילה
         const rect = el.getBoundingClientRect();
         const scrollTop =
           window.pageYOffset || document.documentElement.scrollTop;
 
-        // חישוב: המיקום האבסולוטי של האלמנט + חצי מהגובה שלו - חצי מגובה המסך
-        // זה ימרכז את האלמנט בדיוק באמצע המסך האנכי
         const targetY =
           rect.top + scrollTop - window.innerHeight / 2 + rect.height / 2;
 
@@ -217,7 +225,7 @@ const GalleryPage = () => {
             }`}
             data-reveal
             onTouchStart={(event) => handleTouchStart(item.id, event)}
-            onTouchMove={() => handleTouchMove(item.id)}
+            onTouchMove={(event) => handleTouchMove(item.id, event)} // הוספנו את ה-event כאן
             onTouchEnd={(event) => handleTouchEnd(item.id, event)}
             onClick={() => handleClick(item.id)}
           >
