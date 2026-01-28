@@ -243,35 +243,41 @@ const GalleryPage = () => {
     touchTracker.current[id] = {
       startX: touch.clientX,
       startY: touch.clientY,
+      startTime: Date.now(),
+      moved: false,
     };
   };
 
   const handleTouchMove = (id, event) => {
     const info = touchTracker.current[id];
-    if (!info) {
+    if (!info || info.moved) {
       return;
     }
     const touch = event.touches[0];
     const dx = Math.abs(touch.clientX - info.startX);
     const dy = Math.abs(touch.clientY - info.startY);
-    if (dx > 12 || dy > 12) {
+    if (dx > 8 || dy > 8) {
       info.moved = true;
     }
-    touchTracker.current[id] = info;
   };
 
   const handleTouchEnd = (id, event) => {
     const info = touchTracker.current[id];
-    const touch = event.changedTouches[0];
-    const dx = info ? Math.abs(touch.clientX - info.startX) : 0;
-    const dy = info ? Math.abs(touch.clientY - info.startY) : 0;
-    touchTracker.current[id] = null;
-    if (dx > 12 || dy > 12 || info?.moved) {
+    if (!info) {
       return;
     }
-    event.preventDefault();
+
+    const timeDiff = Date.now() - info.startTime;
+    const wasMoved = info.moved;
+    touchTracker.current[id] = null;
+
+    if (wasMoved || timeDiff > 300) {
+      return;
+    }
+
     const opened = handleTripleTap(id);
     if (!opened) {
+      event.preventDefault();
       handleToggleActive(id, "touch");
     }
   };
@@ -284,19 +290,9 @@ const GalleryPage = () => {
       return;
     }
     if (source === "touch") {
-      ignoreClickUntil.current = Date.now() + 900;
+      ignoreClickUntil.current = Date.now() + 400;
     }
-    setActiveId((prev) => {
-      const next = prev === id ? null : id;
-      if (next && itemRefs.current[id]) {
-        itemRefs.current[id].scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "center",
-        });
-      }
-      return next;
-    });
+    setActiveId((prev) => (prev === id ? null : id));
   };
 
   useEffect(() => {
