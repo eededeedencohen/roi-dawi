@@ -3,9 +3,9 @@
   "name": "לזכרו של רועי דאוי",
   "icons": [
     {
-      "src": "vite.svg",
+      "src": "roi2.png",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png"
     }
   ],
   "start_url": ".",
