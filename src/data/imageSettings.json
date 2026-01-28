@@ -20,5 +20,10 @@
       "position": "center 30%",
       "zoom": 1.0
     }
+  },
+  "homeHero": {
+    "position": "center 20%",
+    "zoom": 1.02,
+    "height": 260
   }
 }
