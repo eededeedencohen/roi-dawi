@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -299,10 +299,31 @@ const GalleryPage = () => {
     });
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.setAttribute("data-visible", "true");
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -80px 0px",
+      },
+    );
+
+    const targets = document.querySelectorAll("[data-reveal]");
+    targets.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className={styles.gallerySection}>
       <h2 className={styles.galleryTitle} data-reveal>
-        רגעים שתלויים בלב
+        רגעים שנעוצים בלב
       </h2>
       <div className={styles.galleryGrid}>
         {memories.map((item) => (

@@ -8,6 +8,7 @@
     --memorial-surface: #ffffff;
     --memorial-ink: #1f2937;
     --memorial-soft: #f4f6fb;
+    scroll-behavior: smooth;
 }
 
 .page {
@@ -15,6 +16,7 @@
     color: var(--memorial-ink);
     min-height: 100vh;
     font-family: "Assistant", sans-serif;
+    scroll-behavior: smooth;
 }
 
 .mainContent {
@@ -151,25 +153,117 @@
     font-size: 22px;
     color: #6b7280;
     cursor: pointer;
+    transition: transform 0.25s ease, color 0.2s ease;
+}
+
+.mobileMenuButton:active {
+    transform: scale(0.9) rotate(90deg);
+    color: var(--givati-purple);
 }
 
 .mobileMenu {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 16px 24px 20px;
-    background: #fff;
-    border-top: 1px solid #f1f1f1;
+    gap: 8px;
+    padding: 20px 24px 24px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid var(--givati-purple);
+    box-shadow: 0 8px 32px rgba(128, 0, 128, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    animation: slideDown 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top;
+    overflow: hidden;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
 }
 
 .mobileMenuItem {
     text-align: right;
     border: none;
     background: none;
-    font-size: 15px;
-    color: #374151;
+    font-size: 16px;
+    color: #1f2937;
     cursor: pointer;
-    padding: 6px 0;
+    padding: 12px 12px;
+    opacity: 0;
+    animation: fadeInItem 0.4s ease forwards;
+    transition: all 0.25s ease;
+    border-radius: 10px;
+    font-weight: 500;
+    position: relative;
+}
+
+.mobileMenuItem::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 0;
+    background: var(--givati-purple);
+    border-radius: 2px;
+    transition: height 0.3s ease;
+}
+
+.mobileMenuItem:active::before {
+    height: 60%;
+}
+
+.mobileMenuItem:nth-child(1) {
+    animation-delay: 0.08s;
+}
+
+.mobileMenuItem:nth-child(2) {
+    animation-delay: 0.14s;
+}
+
+.mobileMenuItem:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.mobileMenuItem:nth-child(4) {
+    animation-delay: 0.26s;
+}
+
+.mobileMenuItem:nth-child(5) {
+    animation-delay: 0.32s;
+}
+
+.mobileMenuItem:nth-child(6) {
+    animation-delay: 0.38s;
+}
+
+@keyframes fadeInItem {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.mobileMenuItem:active {
+    transform: translateX(8px);
+    background: rgba(128, 0, 128, 0.08);
+    color: var(--givati-purple);
 }
 
 .heroSection {
@@ -1252,6 +1346,14 @@
     font-size: 32px;
     color: var(--givati-purple);
     margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.galleryTitle[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .galleryGrid {
@@ -1274,6 +1376,30 @@
     --gallery-rotate: -1.5deg;
     transform: rotate(var(--gallery-rotate));
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    opacity: 0;
+    transform: translateY(50px) rotate(var(--gallery-rotate)) scale(0.85);
+}
+
+.galleryItem[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--gallery-rotate)) scale(1);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.galleryItem:nth-child(2n)[data-visible="true"] {
+    transition-delay: 0.08s;
+}
+
+.galleryItem:nth-child(3n)[data-visible="true"] {
+    transition-delay: 0.16s;
+}
+
+.galleryItem:nth-child(4n)[data-visible="true"] {
+    transition-delay: 0.12s;
+}
+
+.galleryItem:nth-child(5n)[data-visible="true"] {
+    transition-delay: 0.2s;
 }
 
 .galleryPin,
@@ -1352,17 +1478,19 @@
 }
 
 .galleryItem:hover {
-    transform: rotate(0deg) scale(1.22);
+    transform: translateY(0) rotate(0deg) scale(1.22) !important;
     box-shadow: 0 48px 90px rgba(35, 24, 10, 0.5);
     z-index: 10;
-    transition-delay: 0.2s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition-delay: 0s;
 }
 
 .galleryItemActive {
-    transform: rotate(0deg) scale(1.22);
+    transform: translateY(0) rotate(0deg) scale(1.22) !important;
     box-shadow: 0 48px 90px rgba(35, 24, 10, 0.5);
     z-index: 10;
-    transition-delay: 0.2s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition-delay: 0s;
 }
 
 .galleryItem:hover .galleryPin {
