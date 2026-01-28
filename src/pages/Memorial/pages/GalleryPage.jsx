@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// ... כל הייבואים של התמונות נשארים אותו דבר, לא שיניתי ...
 import Roi1 from "../../../assets/roiImages/roi1.png";
 import Roi2 from "../../../assets/roiImages/roi2.png";
 import Roi3 from "../../../assets/roiImages/roi3.png";
@@ -40,7 +39,7 @@ import RoiHapoel from "../../../assets/roiImages/roiHapoel.jpg";
 import RoiMechina1 from "../../../assets/roiImages/roiMechina1.jpg";
 import RoiMechina2 from "../../../assets/roiImages/roiMechina2.jpg";
 import imageSettings from "../../../data/imageSettings.json";
-import styles from "./GalleryPage.module.css"; // שים לב לנתיב
+import styles from "./GalleryPage.module.css";
 
 const memories = [
   { id: 1, img: Roi1, caption: "רועי במדים" },
@@ -141,7 +140,6 @@ const GalleryPage = () => {
     const isScrolling = info.isScrolling;
     touchTracker.current[id] = null;
 
-    // Only toggle if it was a quick tap without scrolling
     if (!isScrolling && timeDiff < 300) {
       event.preventDefault();
       setActiveId((prev) => (prev === id ? null : id));
@@ -149,11 +147,25 @@ const GalleryPage = () => {
   };
 
   const handleClick = (id) => {
-    // Desktop click handler
     if (window.matchMedia("(hover: hover)").matches) {
       setActiveId((prev) => (prev === id ? null : id));
     }
   };
+
+  // --- הוספת גלילה אוטומטית למרכז התמונה הפעילה ---
+  useEffect(() => {
+    if (activeId !== null) {
+      const el = document.getElementById(`gallery-item-${activeId}`);
+      if (el) {
+        // גלילה חלקה למרכז המסך
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
+    }
+  }, [activeId]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -185,6 +197,7 @@ const GalleryPage = () => {
         {memories.map((item) => (
           <div
             key={item.id}
+            id={`gallery-item-${item.id}`} // הוספת ID לצורך זיהוי וגלילה
             className={`${styles.galleryItem} ${
               activeId === item.id ? styles.galleryItemActive : ""
             }`}

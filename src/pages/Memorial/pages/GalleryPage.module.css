@@ -40,7 +40,10 @@
     padding: 12px 12px 20px;
     border: 1px solid rgba(15, 23, 42, 0.08);
     box-shadow: 0 18px 30px rgba(35, 24, 10, 0.25);
-    --gallery-rotate: -2.5deg;
+
+    /* זווית בסיסית גדולה יותר */
+    --gallery-rotate: -3deg;
+
     transform: rotate(var(--gallery-rotate));
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     opacity: 0;
@@ -48,6 +51,7 @@
     cursor: pointer;
     -webkit-user-select: none;
     user-select: none;
+    will-change: transform;
 }
 
 .galleryItem[data-visible="true"] {
@@ -72,22 +76,25 @@
     transition-delay: 0.2s;
 }
 
+/* זוויות הטיה גדולות יותר (פיזור רחב יותר) */
 .galleryItem:nth-child(3n) {
-    --gallery-rotate: 2.8deg;
+    --gallery-rotate: 4deg;
 }
 
 .galleryItem:nth-child(4n) {
-    --gallery-rotate: -3.5deg;
+    --gallery-rotate: -5.5deg;
 }
 
 .galleryItem:nth-child(5n) {
-    --gallery-rotate: 3.8deg;
+    --gallery-rotate: 6deg;
 }
 
+/* הגדרות בסיס לסיכה ולצל */
 .galleryPin,
 .galleryPinShadow {
     position: absolute;
     pointer-events: none;
+    transition: all 0.4s ease;
 }
 
 .galleryPhotoFrame {
@@ -105,7 +112,6 @@
     background: radial-gradient(circle at 30% 30%, #c8a2ff 0%, #7b2cbf 55%, #3b0a64 100%);
     box-shadow: 0 4px 8px rgba(59, 10, 100, 0.45);
     z-index: 2;
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
     transform-origin: center;
 }
 
@@ -132,7 +138,6 @@
     filter: blur(2px);
     border-radius: 999px;
     z-index: 1;
-    transition: transform 0.22s ease, opacity 0.22s ease;
 }
 
 .galleryPinCenter,
@@ -159,99 +164,121 @@
     transition: transform 0.4s ease;
 }
 
-.galleryItem:hover,
-.galleryItemActive {
-    transform: translateY(0) rotate(0deg) scale(1.22) !important;
-    box-shadow: 0 48px 90px rgba(35, 24, 10, 0.5);
-    z-index: 10;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    transition-delay: 0s;
-}
-
-.galleryItem:hover .galleryPin,
-.galleryItemActive .galleryPin {
-    transform: translateY(-32px) rotate(-12deg) scale(1.05);
-    box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
-}
-
-.galleryItem:hover .galleryPin::after,
-.galleryItemActive .galleryPin::after {
-    opacity: 1;
-    transform: translateX(-50%) scaleY(1);
-}
-
-.galleryItem:hover .galleryPinShadow,
-.galleryItemActive .galleryPinShadow {
-    transform: translateY(-16px) scale(0.7);
-    opacity: 0.2;
-}
-
-@media (hover: none) {
-    .galleryItem {
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        touch-action: pan-y;
-        user-select: none;
-        will-change: transform;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-    }
-
+/* --- Desktop Hover Effects --- */
+@media (hover: hover) {
     .galleryItem:hover {
-        transform: translateY(0) rotate(var(--gallery-rotate)) scale(1) !important;
-        box-shadow: 0 18px 30px rgba(35, 24, 10, 0.25);
-        transition: none;
+        transform: translateY(0) rotate(0deg) scale(1.22) !important;
+        box-shadow: 0 48px 90px rgba(35, 24, 10, 0.5);
+        z-index: 10;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transition-delay: 0s;
     }
 
-    .galleryItemActive {
-        transform: translateY(0) rotate(0deg) scale(1.16) !important;
-        box-shadow: 0 48px 90px rgba(128, 0, 128, 0.3);
-        z-index: 10;
-        transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+    .galleryItem:hover .galleryPin {
+        transform: translateY(-32px) rotate(-12deg) scale(1.05);
+        box-shadow: 0 8px 14px rgba(63, 29, 0, 0.5);
+    }
+
+    .galleryItem:hover .galleryPin::after {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+    }
+
+    .galleryItem:hover .galleryPinShadow {
+        transform: translateY(-16px) scale(0.7);
+        opacity: 0.2;
     }
 }
 
+/* --- Mobile Specific Animation Logic --- */
 @media (max-width: 540px) {
+    .galleryGrid {
+        gap: 10px;
+        /* רווח של 10 פיקסלים כפי שביקשת */
+        padding: 0;
+        overflow: visible;
+    }
+
     .galleryItem {
-        height: 250px;
-        width: 250px;
+        height: 260px;
+        width: 260px;
         padding: 14px 14px 24px;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
-    }
 
-    .galleryGrid {
-        grid-template-columns: 1fr;
-        gap: 32px;
-        padding: 0 8px;
-    }
-
-    /* תמונות אי-זוגיות - צמודות לימין */
-    .galleryItem:nth-child(odd) {
-        justify-self: end;
-    }
-
-    /* תמונות זוגיות - צמודות לשמאל */
-    .galleryItem:nth-child(even) {
-        justify-self: start;
-    }
-
-    .galleryItem:hover,
-    .galleryItemActive {
-        transform: rotate(0deg) scale(1.15);
-    }
-
-    /* תמונה active תהיה במרכז */
-    .galleryItemActive {
         justify-self: center !important;
-        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease;
     }
 
+    /* הזזת תמונות הצידה במצב רגיל */
+    .galleryItem:nth-child(even) {
+        transform: translateX(-25%) rotate(var(--gallery-rotate)) scale(0.9);
+    }
+
+    .galleryItem:nth-child(odd) {
+        transform: translateX(25%) rotate(var(--gallery-rotate)) scale(0.9);
+    }
+
+    /* --- מצב Active (פתיחה - חזרה למרכז) --- */
+
+    .galleryItemActive {
+        transform: translateX(0) rotate(0deg) scale(1.15) !important;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+        z-index: 50;
+    }
+
+    /* סיכה במצב Active: עולה למעלה מיד */
+    .galleryItemActive .galleryPin {
+        opacity: 1;
+        transform: translateY(-45px);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
+        /* אין דיליי */
+    }
+
+    /* החוד מופיע מיד */
+    .galleryItemActive .galleryPin::after {
+        opacity: 1;
+        transform: translateX(-50%) scaleY(1);
+        transition: opacity 0.2s ease 0s;
+    }
+
+    /* הצל נעלם מיד */
+    .galleryItemActive .galleryPinShadow {
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease 0s;
+    }
+
+    /* --- מצב Default (סגירה / חזרה לצדדים) --- */
+
+    /* סיכה במצב סגירה: יורדת למטה בדיליי (אחרי שהתמונה זזה) */
     .galleryPin {
         top: -10px;
         width: 20px;
         height: 20px;
+        transform: translateY(0);
+        opacity: 1;
+
+        /* 0.6s דיליי (זמן חזרת התמונה)
+           0.4s משך הנפילה
+        */
+        transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1.5) 0.6s;
+    }
+
+    /* החוד נעלם רק כשהסיכה נוחתת */
+    .galleryPin::after {
+        opacity: 0;
+        transition: opacity 0.2s ease 0.8s;
+        /* דיליי כדי שיעלם בסוף הנפילה */
+    }
+
+    /* הצל מופיע רק כשהסיכה נוחתת */
+    .galleryPinShadow {
+        transform: scale(1);
+        opacity: 1;
+        transition: transform 0.4s ease 0.8s, opacity 0.4s ease 0.8s;
     }
 
     .galleryPhotoFrame {
